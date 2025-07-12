@@ -5,7 +5,7 @@
   <link href="movie.css" rel="stylesheet" />
   <link href="rotten.gif" rel="icon" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="movie.js" defer> </script>
+  <script src="movie.js" defer></script>
 </head>
 <body>
   <header> 
@@ -30,7 +30,7 @@
     <!-- Banner with score -->
     <div id="banner">
       <img id="scoreImage" src="" alt="">
-      <span id="scoreText"></span>
+      <span id="scoreText"><strong></strong></span>
     </div>
 
     <!-- Reviews -->
@@ -43,6 +43,22 @@
     </footer>
   </div>
 
-  
+  <div id="error" style="display:none; color:red; text-align:center; font-size:1.5rem;"></div>
+
+  <!-- Templates -->
+  <template id="reviewBoxTemplate">
+    <div class="revbox">
+      <img src="fresh.gif" alt="Fresh" />
+      <q></q>
+    </div>
+  </template>
+
+  <template id="criticTemplate">
+    <p class="critic">
+      <img src="critic.gif" alt="Critic" /><br>
+      <strong></strong><br>
+      <span class="affiliation"></span>
+    </p>
+  </template>
 </body>
 </html>

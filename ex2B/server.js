@@ -13,21 +13,21 @@ const db = new sqlite3.Database(dbPath);
 app.use(express.static(path.join(__dirname, 'public')));
 
 // JSON to get movie data by film code
-app.get('/movie', async (req, res) => {
-  const { movie } = req.query;
-  if (!movie) {
+app.get('/film', async (req, res) => {
+  const { film } = req.query;
+  if (!film) {
     return res.status(400).json({ error: 'Missing movie code in query string' });
   }
 
   try {
     const [filmTitle, filmDetails, filmRating, filmYear, reviews, cast, filmScore] = await Promise.all([
-      getFilmNameByCode(movie),
-      getFilmDetails(movie),
-      getFilmRating(movie),
-      getFilmYear(movie),
-      getReviews(movie),
-      getFilmCast(movie),
-      getFilmScore(movie)
+      getFilmNameByCode(film),
+      getFilmDetails(film),
+      getFilmRating(film),
+      getFilmYear(film),
+      getReviews(film),
+      getFilmCast(film),
+      getFilmScore(film)
     ]);
 
     res.json({
@@ -47,9 +47,9 @@ app.get('/movie', async (req, res) => {
 
 // Helper functions
 
-function getFilmNameByCode(movie) {
+function getFilmNameByCode(film) {
   return new Promise((resolve, reject) => {
-    db.get('SELECT Title FROM Films WHERE FilmCode = ?', [movie], (err, row) => {
+    db.get('SELECT Title FROM Films WHERE FilmCode = ?', [film], (err, row) => {
       if (err) reject(err);
       else if (!row) reject(new Error('Film not found'));
       else resolve(row.Title);
@@ -57,9 +57,9 @@ function getFilmNameByCode(movie) {
   });
 }
 
-function getFilmRating(movie) {
+function getFilmRating(film) {
   return new Promise((resolve, reject) => {
-    db.get('SELECT Score FROM Films WHERE FilmCode = ?', [movie], (err, row) => {
+    db.get('SELECT Score FROM Films WHERE FilmCode = ?', [film], (err, row) => {
       if (err) reject(err);
       else if (!row) reject(new Error('Film not found'));
       else resolve(row.Score);
@@ -67,18 +67,18 @@ function getFilmRating(movie) {
   });
 }
 
-function getFilmScore(movie) {
+function getFilmScore(film) {
   return new Promise((resolve, reject) => {
-    db.get('SELECT Score FROM Films WHERE FilmCode = ?', [movie], (err, row) => {
+    db.get('SELECT Score FROM Films WHERE FilmCode = ?', [film], (err, row) => {
       if (err) reject(err);
       else resolve(row.Score);
     });
   });
 }
 
-function getFilmDetails(movie) {
+function getFilmDetails(film) {
   return new Promise((resolve, reject) => {
-    db.all('SELECT Attribute, Value FROM FilmDetails WHERE FilmCode = ?', [movie], (err, rows) => {
+    db.all('SELECT Attribute, Value FROM FilmDetails WHERE FilmCode = ?', [film], (err, rows) => {
       if (err) reject(err);
       else {
         const details = {};
@@ -94,9 +94,9 @@ function getFilmDetails(movie) {
   });
 }
 
-function getFilmYear(movie) {
+function getFilmYear(film) {
   return new Promise((resolve, reject) => {
-    db.get('SELECT Year FROM Films WHERE FilmCode = ?', [movie], (err, row) => {
+    db.get('SELECT Year FROM Films WHERE FilmCode = ?', [film], (err, row) => {
       if (err) reject(err);
       else if (!row) reject(new Error('Film not found'));
       else resolve(row.Year);
@@ -104,25 +104,25 @@ function getFilmYear(movie) {
   });
 }
 
-function getReviews(movie) {
+function getReviews(film) {
   return new Promise((resolve, reject) => {
-    db.all('SELECT ReviewerName, Affiliation, ReviewText FROM Reviews WHERE FilmCode = ?', [movie], (err, rows) => {
+    db.all('SELECT ReviewerName, Affiliation, ReviewText FROM Reviews WHERE FilmCode = ?', [film], (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });
   });
 }
 
-function getFilmCast(movie) {
+function getFilmCast(film) {
   return new Promise((resolve, reject) => {
-    db.get('SELECT Value FROM FilmDetails WHERE FilmCode = ? AND Attribute = "Cast"', [movie], (err, row) => {
+    db.get('SELECT Value FROM FilmDetails WHERE FilmCode = ? AND Attribute = "Cast"', [film], (err, row) => {
       if (err) reject(err);
       else resolve(row?.Value?.split(',').map(actor => actor.trim()) || []);
     });
   });
 }
 
-app.get('/movie=:movieCode', (req, res) => {
+app.get('/film=:filmCode', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'movie.html'));
 });
 
